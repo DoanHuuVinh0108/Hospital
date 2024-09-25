@@ -1,13 +1,13 @@
-const express = require("express");
-
-const doctors = require("../controllers/doctor.controller");
+import express from "express";
+import doctor from "../controllers/doctor.controller";
 
 const router = express.Router();
 
-router
-  .route("/")
-  .get(doctors.findAll)
-  .post(doctors.create)
-  .delete(doctors.deleteAll);
+router.route("/getId/:id").get(doctor.getId);
+router.route("/getAll").get(doctor.getAll);
+router.route("/getDoctorSalient").get(doctor.getDoctorSalient);
+router.route("/add").post(doctor.add);
+router.route("/update/:id").put(doctor.update);
+router.route("/delete/:id").delete(doctor.delete);
 
 module.exports = router;

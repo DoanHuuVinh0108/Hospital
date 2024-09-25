@@ -1,4 +1,4 @@
-import doctorService from "../services/doctor.service";
+import patientService from "../services/patient.service";
 import userService from "../services/user.service";
 import ApiError from "../../api-error";
 import multer from "multer";
@@ -9,7 +9,7 @@ const upload = multer({ storage: storage }).single("file");
 
 exports.getAll = async (req, res, next) => {
   try {
-    const result = await doctorService.getAll();
+    const result = await patientService.getAll();
     if (result != []) {
       res.status(200).json({
         errcode: 0,
@@ -26,7 +26,7 @@ exports.getAll = async (req, res, next) => {
   } catch (error) {
     res.status(500).json({
       errcode: 1,
-      message: "Can not get doctor",
+      message: "Can not get patient",
       error: error,
     });
   }
@@ -38,7 +38,7 @@ exports.getId = async (req, res, next) => {
   }
 
   try {
-    const result = await doctorService.getId(req.params.id);
+    const result = await patientService.getId(req.params.id);
     if (result != []) {
       res.status(200).json({
         errcode: 0,
@@ -55,7 +55,7 @@ exports.getId = async (req, res, next) => {
   } catch (error) {
     res.status(500).json({
       errcode: 1,
-      message: "Can not get doctor",
+      message: "Can not get patient",
       error: error,
     });
   }
@@ -74,13 +74,11 @@ exports.add = async (req, res, next) => {
     if (
       !req.body.name ||
       !req.body.birthday ||
-      !req.body.gender ||
-      !req.body.scoreEvaluate ||
-      !req.body.associateProfessor ||
-      !req.body.numberEvaluate ||
-      !req.body.idMedicalSpecialty
+      !req.body.address ||
+      !req.body.profession ||
+      !req.body.gender
     ) {
-      return next(new ApiError(400, "Not enough field require"));
+      return next(new ApiError(400, "not enough field require"));
     }
 
     const avatar = req.file.buffer.toString("base64");
@@ -97,7 +95,7 @@ exports.add = async (req, res, next) => {
 
     if (addUser.affectedRows === 1) {
       try {
-        const result = await doctorService.add(
+        const result = await patientService.add(
           addUser.insertId,
           req.body,
           avatar
@@ -117,35 +115,10 @@ exports.add = async (req, res, next) => {
     } else {
       res.status(500).json({
         errcode: 1,
-        message: "Add fail",
+        message: "Add faild",
       });
     }
   });
-};
-
-exports.getDoctorSalient = async (req, res, next) => {
-  try {
-    const result = await doctorService.getDoctorSalient();
-    if (result != []) {
-      res.status(200).json({
-        errcode: 0,
-        message: "Get success",
-        data: result,
-      });
-    } else {
-      res.status(204).json({
-        errcode: 0,
-        message: "No content",
-        data: result,
-      });
-    }
-  } catch (error) {
-    res.status(500).json({
-      errcode: 1,
-      message: "Get fail",
-      error: error,
-    });
-  }
 };
 
 exports.update = async (req, res, next) => {
@@ -160,18 +133,17 @@ exports.update = async (req, res, next) => {
       console.log("Multer Error:", err);
       return res.status(500).json({ error: "Error uploading file" });
     } else if (err) {
-      checkFileImg = false;
       console.log("Unknown Error:", err);
+      checkFileImg = false;
     }
 
     if (
       !req.body.name ||
       !req.body.birthday ||
+      !req.body.address ||
+      !req.body.profession ||
       !req.body.gender ||
-      !req.body.scoreEvaluate ||
-      !req.body.associateProfessor ||
-      !req.body.numberEvaluate ||
-      !req.body.idMedicalSpecialty
+      !req.body.avatar
     ) {
       return next(new ApiError(400, "not enough field require"));
     }
@@ -185,18 +157,10 @@ exports.update = async (req, res, next) => {
     try {
       var result = null;
       if (avatar != null) {
-        result = await doctorService.update(
-          req.params.id,
-          req.body,
-          avatar
-        );
+        result = await patientService.update(req.params.id, req.body, avatar);
       } else {
-        result = await doctorService.updateNotImg(
-          req.params.id,
-          req.body
-        );
+        result = await patientService.updateNotImg(req.params.id, req.body);
       }
-      
       if (result.affectedRows === 0) {
         res.status(404).json({
           errcode: 1,
@@ -225,7 +189,7 @@ exports.delete = async (req, res, next) => {
   }
 
   try {
-    const result = await doctorService.delete(req.params.id);
+    const result = await patientService.delete(req.params.id);
     if (result == 2) {
       res.status(200).json({
         errcode: 0,

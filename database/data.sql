@@ -1,8 +1,9 @@
 CREATE TABLE user (
     Id INT PRIMARY KEY AUTO_INCREMENT,
-    Password VARCHAR(255) NOT NULL,
+    Password TEXT NOT NULL,
     Email VARCHAR(255) UNIQUE NOT NULL,
-    PhoneNumber VARCHAR(255) UNIQUE NOT NULL
+    PhoneNumber VARCHAR(255) UNIQUE NOT NULL,
+    Role INT NOT NULL
 );
 
 CREATE TABLE medicalSpecialty(
@@ -15,7 +16,7 @@ CREATE TABLE doctor(
     Name VARCHAR(255) NOT NULL,
     Birthday DATE,
     Gender VARCHAR(255),
-    Avatar MEDIUMBLOB, 
+    Avatar LONGTEXT, 
     ScoreEvaluate float,
     AssociateProfessor VARCHAR(255),
     NumberEvaluate int,
@@ -32,7 +33,7 @@ CREATE TABLE patient(
     Address VARCHAR(255),
     Profession VARCHAR(255),
     Gender VARCHAR(255),
-    Avatar MEDIUMBLOB,
+    Avatar LONGTEXT,
     PRIMARY KEY(Id),
     FOREIGN KEY(Id) REFERENCES user(Id)
 );
